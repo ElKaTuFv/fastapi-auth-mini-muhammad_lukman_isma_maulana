@@ -18,17 +18,6 @@ def get_db():
     finally:
         db.close()
 
-
-@app.post("/auth/login", response_model=schemas.TokenResponse)
-def login(req: schemas.LoginRequest, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.email == req.email).first()
-    if not user or not utils.verify_password(req.password, user.password_hash):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    if not user.is_verified:
-        raise HTTPException(status_code=403, detail="Email not verified")
-    token = utils.create_access_token({"sub": str(user.id)})
-    return {"access_token": token, "token_type": "bearer"}    
-
 @app.post("/auth/register")
 def register(req: schemas.RegisterRequest, db:Session = Depends(get_db)):
     existing_email = db.query(models.User).filter(models.User.email == req.email).first()
@@ -50,6 +39,16 @@ def register(req: schemas.RegisterRequest, db:Session = Depends(get_db)):
     "message": "User registered successfully! Verification email has been sent.",
     "email": user.email
     }
+
+@app.post("/auth/login", response_model=schemas.TokenResponse)
+def login(req: schemas.LoginRequest, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.email == req.email).first()
+    if not user or not utils.verify_password(req.password, user.password_hash):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    if not user.is_verified:
+        raise HTTPException(status_code=403, detail="Email not verified")
+    token = utils.create_access_token({"sub": str(user.id)})
+    return {"access_token": token, "token_type": "bearer"}    
 
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security), 

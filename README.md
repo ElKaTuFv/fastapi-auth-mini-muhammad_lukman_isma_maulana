@@ -1,12 +1,12 @@
 # FastAPI Authentication System
 
-Proyek ini adalah sistem **autentikasi berbasis FastAPI** dengan fitur:
+This project is an **authentication system built with FastAPI** featuring:
 
-- Registrasi & Login JWT
-- Verifikasi Email
-- Lupa Password & Reset Password
+- Registration & Login with JWT
+- Email Verification
+- Forgot Password & Reset Password
 - Admin Creation via CLI
-- Brevo (SMTP) sebagai mail sender
+- Brevo (SMTP) as the mail sender
 
 ---
 
@@ -22,7 +22,7 @@ Proyek ini adalah sistem **autentikasi berbasis FastAPI** dengan fitur:
 
 ---
 
-## 📦 Instalasi
+## 📦 Installation
 
 1. **Clone repository**
 
@@ -31,7 +31,7 @@ Proyek ini adalah sistem **autentikasi berbasis FastAPI** dengan fitur:
    cd fastapi_auth
    ```
 
-2. **Buat virtual environment**
+2. **Create a virtual environment**
 
    ```bash
    python -m venv venv
@@ -46,56 +46,46 @@ Proyek ini adalah sistem **autentikasi berbasis FastAPI** dengan fitur:
 
 ---
 
-## 🔑 Konfigurasi Environment
+## 🔑 Environment Configuration
 
-Buat file `.env` di root project:
+Create a `.env` or copy from `.env.example` file in the project root:
 
 ```ini
-SECRET_KEY=your_secret_key
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
+SECRET_KEY=changeme
+ACCESS_TOKEN_EXPIRE_MINUTES=20
+
 VERIFICATION_TOKEN_EXPIRE_MINUTES=5
 
-# Database
-DATABASE_URL=sqlite:///./app.db
+RESET_TOKEN_EXPIRE_MINUTES=5
 
-# SMTP (Brevo)
 SMTP_SERVER=smtp-relay.brevo.com
 SMTP_PORT=587
-SMTP_USER=apikey
-SMTP_PASS=your_brevo_api_key
-FROM_EMAIL=no-reply@yourdomain.com
+SMTP_USER=get_in_email
+SMTP_PASS=get_in_email
+
 ```
 
 ---
 
-## 🗄️ Inisialisasi Database
-
-Jalankan perintah untuk membuat tabel:
-
-```bash
-python -m app.db_init
-```
-
----
-
-## 👑 Membuat Admin
-
-Gunakan CLI:
-
-```bash
-python -m app.cli create-admin --email admin@example.com --password "S3cret!"
-```
-
----
-
-## 🚀 Menjalankan Server
+## 🚀 Run the Server
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-API akan berjalan di: [http://localhost:8000](http://localhost:8000)
+The API will run at: [http://localhost:8000](http://localhost:8000) and the database will be created automatically.
+
+---
+
+## 👑 Create Admin
+
+Use the CLI:
+
+```bash
+python -m app.cli create-admin --email admin@example.com --password "S3cret!"
+```
+
+An admin account will be created automatically.
 
 ---
 
@@ -103,44 +93,91 @@ API akan berjalan di: [http://localhost:8000](http://localhost:8000)
 
 ### 🔐 Auth
 
-- **POST** `/auth/register` → Registrasi user
-- **POST** `/auth/login` → Login, return JWT
-- **GET** `/auth/verify?token=...` → Verifikasi email
+- **POST** `/auth/register` → User registration
+  - Input: email, password
+  - curl request:
+  ```curl
+      curl -X 'POST' \
+          'http://127.0.0.1:8000/auth/register' \
+          -H 'accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -d '{
+          "email": "m.lukmanisma@gmail.com",
+          "password": "123456789"
+      }'
+  ```
+- **POST** `/auth/login` → User login, returns JWT
+  - Input: email, password
+  - curl request:
+  ```curl
+      curl -X 'POST' \
+        'http://127.0.0.1:8000/auth/login' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -d '{
+        "email": "m.lukmanisma@gmail.com",
+        "password": "123456789"
+      }'
+  ```
+- **GET** `/auth/verify?token=...` → Email verification
+  - curl request:
+  ```curl
+      curl -X 'GET' \
+        'http://127.0.0.1:8000/auth/verify?token=eyJhbGciOiJIUzI1NiIxxxx' \
+        -H 'accept: application/json'
+  ```
+- **GET** `/me` → Get user profile (requires token)
+  - curl request:
+  ```curl
+      curl -X 'GET' \
+        'http://127.0.0.1:8000/me' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6Ikxxxx'
+  ```
 
 ### 🔑 Forgot & Reset Password
 
 - **POST** `/forgot-password`
-  - Input: email → kirim link reset ke email
-- **POST** `/reset-password`
+  - Input: email → Sends reset link to user email
+  - curl request:
+  ```curl
+      curl -X 'POST' \
+        'http://127.0.0.1:8000/forgot-password' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -d '{
+        "email": "m.lukmanisma@gmail.com"
+      }'
+  ```
+- **POST** `/reset-password` → Reset password with token
   - Input: token, new_password, konfirm_password
-  - Update password setelah validasi
+  - curl request:
+  ```curl
+      curl -X 'POST' \
+        'http://127.0.0.1:8000/reset-password' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -d '{
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwZW1idXJ1bWFnYW5nQGdtYWlsLmNvbSIsImV4cCI6MTc1NjExMzU0NX0.YvzS6dNx-86Ggxd6Lt5WwxMUEpQXGcX0RIHz5W-oUAA",
+        "new_password": "987654321",
+        "konfirm_password": "987654321"
+      }'
+  ```
 
 ---
 
-## 📧 Email Verification
+## 💡 Candidate Questions
 
-Email dikirim menggunakan **Brevo SMTP**:
+Q: What other services would improve this project, and why?
 
-```python
-def send_email_verify(email: str, token: str):
-    msg = EmailMessage()
-    msg["Subject"] = "Email Verification"
-    msg["From"] = SMTP_USER
-    msg["To"] = email
-    link = f"http://localhost:8000/auth/verify?token={token}"
-    msg.set_content(f"Click this link to verify your account:\n\n{link}")
-    ...
-```
+1. Email Verification
+   Ensures users validate their identity and helps prevent fake signups.
 
----
+2. Send Email Service
+   Provides communication with users (Verification emails, password resets).
 
-## 📝 License
+3. Forgot Password
+   Allows users to securely request a password reset if they forget their credentials.
 
-Proyek ini menggunakan lisensi **MIT**.  
-Edit di `LICENSE` sesuai nama kamu:
-
-```
-MIT License
-
-Copyright (c) 2025 Nama Kamu
-```
+4. Reset Password
+   Enhances account recovery by letting users update their password via a secure token.
