@@ -166,6 +166,30 @@ An admin account will be created automatically.
 
 ---
 
+## 🧪 Testing with Swagger UI
+
+FastAPI provides an interactive API testing interface out of the box:
+
+1. Start the server:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+2. Open your browser at:
+   👉 http://127.0.0.1:8000/docs
+
+- All endpoints (/auth/register, /auth/login, /auth/verify, /forgot-password, /reset-password, /me, etc.) are listed.
+- Click “Try it out” to execute requests directly from the browser.
+- Example: Register a user, login to get a token, and then call /me.
+
+3. For protected endpoints (like /me):
+
+- Click the Authorize button in the top right.
+- Paste your JWT token in the column value
+
+---
+
 ## 💡 Candidate Questions
 
 Q: What other services would improve this project, and why?
