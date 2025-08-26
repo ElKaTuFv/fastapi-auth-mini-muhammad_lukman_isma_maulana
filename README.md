@@ -198,14 +198,17 @@ uvicorn app.main:app --reload
 
 Q: What other services would improve this project, and why?
 
-1. Email Verification
+1. Registration user
+   Provides a simple entry point for new users and completes the authentication flow.
+   
+2. Email Verification
    Ensures users validate their identity and helps prevent fake signups.
 
-2. Send Email Service
+3. Send Email Service
    Provides communication with users (Verification emails, password resets).
 
-3. Forgot Password
+4. Forgot Password
    Allows users to securely request a password reset if they forget their credentials.
 
-4. Reset Password
+5. Reset Password
    Enhances account recovery by letting users update their password via a secure token.
