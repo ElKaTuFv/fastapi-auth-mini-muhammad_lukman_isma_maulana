@@ -158,7 +158,7 @@ An admin account will be created automatically.
         -H 'accept: application/json' \
         -H 'Content-Type: application/json' \
         -d '{
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwZW1idXJ1bWFnYW5nQGdtYWlsLmNvbSIsImV4cCI6MTc1NjExMzU0NX0.YvzS6dNx-86Ggxd6Lt5WwxMUEpQXGcX0RIHz5W-oUAA",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXxxxx",
         "new_password": "987654321",
         "konfirm_password": "987654321"
       }'
@@ -179,8 +179,10 @@ uvicorn app.main:app --reload
 2. Open your browser at:
    👉 http://127.0.0.1:8000/docs
 
-- All endpoints (/auth/register, /auth/login, /auth/verify, /forgot-password, /reset-password, /me, etc.) are listed.
+- All endpoints (/auth/register, /auth/login, /auth/verify, /forgot-password, /reset-password, /me) are listed.
 - Click “Try it out” to execute requests directly from the browser.
+- After registering, users need to activate their email with a token or link sent via email.
+- To reset your password, you need to enter your email in forgot-password to get a link or token to reset it.
 - Example: Register a user, login to get a token, and then call /me.
 
 3. For protected endpoints (like /me):
