@@ -82,6 +82,7 @@ def verify_email(token: str, db: Session = Depends(get_db)):
             raise HTTPException(status_code=404, detail="User not found")
         user.is_verified = True
         db.commit()
+        db.refresh(user)
         return{"message": "Email verified successfully"}
     except JWTError:
         raise HTTPException(status_code=400, detail="Invalid or Expired token")
