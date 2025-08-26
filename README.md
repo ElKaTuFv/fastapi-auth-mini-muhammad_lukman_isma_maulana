@@ -65,6 +65,8 @@ SMTP_PASS=get_in_email
 
 ```
 
+You can get the `SMTP_USER` and `SMTP_PASS` in the email sending the test results, or get them directly from `https://www.brevo.com/`
+
 ---
 
 ## 🚀 Run the Server
